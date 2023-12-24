@@ -109,7 +109,7 @@ class MessageBoard(object):
     def draw(self):
         #Draw the surrounding box
         self.box.draw()
-        
+
         # Internal drawing rectangle of the box 
         #
         #
@@ -118,27 +118,27 @@ class MessageBoard(object):
         # Calculate required space for text+padding+border
         # utils.get_messagebox_coords(width, height, padding)
         # returns x, y, height, width?
-        
+
         # Internal rectangle where the text is actually drawn
         text_rect = Rect(
             self.rect.left + self.border_width,
             self.rect.top + self.border_width,
             self.rect.width - self.border_width * 2,
             self.rect.height - self.border_width * 2)
-            
+
         x_pos = text_rect.left
         y_pos = text_rect.top 
-        
+
         # Render all the lines of text one below the other
         #
         for line in self.text:
             line_sf = self.font.render(line, True, self.font_color, self.bgcolor)
-            
+
             #test if we can fit text into the MessageBoard + padding
-            
+
             if ( line_sf.get_width() + x_pos + self.padding > self.rect.right or line_sf.get_height() + y_pos + self.padding > self.rect.bottom):
-                raise LayoutError('Cannot fit line "%s" in widget' % line)
-            
+                raise LayoutError(f'Cannot fit line "{line}" in widget')
+
             self.surface.blit(line_sf, (x_pos+self.padding, y_pos+self.padding))
             y_pos += line_sf.get_height()
 
@@ -273,37 +273,37 @@ class textEntry(object):
 		self.textRect = Rect(self.pos.x, self.pos.y, self.textSize.x, self.textSize.y)
                 
 	def draw(self):
-		if self.clicked:
-			if pygame.key.get_focused():
-				pressed = pygame.key.get_pressed()
-				for i in range(len(pressed)):
-					if pressed[i] == 1:
-						key = pygame.key.name(i)
-						if self.lastKey == key and self.delay <= 1:
-							#can't seem to find a decent delay time please fix
-							self.delay += .4
-						elif len(key) == 1 and self.font.size(self.text)[0] <= self.size.x:
-							#could easily create a wrap using lists and proper indexing, will do later
-							self.text+= key
-							self.delay = 0
-							self.lastKey = key
-						elif key == "tab":
-							self.text += "    "
-							self.delay = 0
-							self.lastKey = key
-						elif key == "space":
-							self.text += " "
-							self.delay = 0
-							self.lastKey = key
-						elif key == "backspace":
-							self.text = self.text[:-1]
-							self.delay = 0
-							self.lastKey = key
-						
-						self.textOverlay = self.font.render(self.text,1,self.textcolor)
+	    if pygame.key.get_focused():
+	        if self.clicked:
+	            pressed = pygame.key.get_pressed()
+	            for i in range(len(pressed)):
+	                if pressed[i] == 1:
+	                    key = pygame.key.name(i)
+	                    if self.lastKey == key and self.delay <= 1:
+	                        #can't seem to find a decent delay time please fix
+	                        self.delay += .4
+	                    elif len(key) == 1 and self.font.size(self.text)[0] <= self.size.x:
+	                    	#could easily create a wrap using lists and proper indexing, will do later
+	                    	self.text+= key
+	                    	self.delay = 0
+	                    	self.lastKey = key
+	                    elif key == "tab":
+	                    	self.text += "    "
+	                    	self.delay = 0
+	                    	self.lastKey = key
+	                    elif key == "space":
+	                    	self.text += " "
+	                    	self.delay = 0
+	                    	self.lastKey = key
+	                    elif key == "backspace":
+	                        self.delay = 0
+	                        self.text = self.text[:-1]
+	                        self.lastKey = key
 
-		pygame.draw.rect(self.surface, (255,255,255), self.rect)
-		self.surface.blit(self.textOverlay, self.textRect)
+	                    self.textOverlay = self.font.render(self.text,1,self.textcolor)
+
+	    pygame.draw.rect(self.surface, (255,255,255), self.rect)
+	    self.surface.blit(self.textOverlay, self.textRect)
 			
 	def mouse_click_event(self, pos):
 		if self._point_is_inside(vec2d(pos)):
